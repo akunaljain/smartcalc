@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⚡ Fast Amount Add Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg-1: #0f0f23;
+  --bg-2: #1a1a2e;
+  --bg-3: #16213e;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --accent: #00d4ff;
+  --accent-2: #ff006e;
+  --success: #00ff88;
+  --danger: #ff3366;
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.6);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  --glow: 0 0 40px;
+}
+
+[data-theme="light"] {
+  --bg-1: #f8f9fa;
+  --bg-2: #ffffff;
+  --bg-3: #e9ecef;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --accent: #0066ff;
+  --accent-2: #ff0066;
+  --success: #00cc66;
+  --danger: #ff3366;
+  --text: #1a1a2e;
+  --text-dim: rgba(0, 0, 0, 0.6);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-1);
+  color: var(--text);
+  height: 100dvh; /* Magic: Keyboard ke hisaab se adjust hoga */
+  overflow: hidden; /* Page ko scroll hone se rokega */
+  transition: background 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+/* Animated Background */
+.bg-animation {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-gradient {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: float 20s ease-in-out infinite;
+}
+
+.gradient-1 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  top: -200px;
+  left: -200px;
+  animation-delay: 0s;
+}
+
+.gradient-2 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(225deg, var(--success), var(--accent));
+  bottom: -150px;
+  right: -150px;
+  animation-delay: -10s;
+}
+
+.gradient-3 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(45deg, var(--accent-2), var(--success));
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(50px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-50px, 50px) scale(0.9);
+  }
+}
+
+
+.container {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  height: 100dvh; /* Ye bhi viewport tak limit rakhega */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  padding: 15px 15px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  font-size: 32px;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  0%, 90% { transform: rotate(0deg); }
+  95% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.logo-text h1 {
+  font-size: 20px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.logo-text p {
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 700;
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+.theme-toggle {
+  width: 45px;
+  height: 45px;
+  border-radius: 23px;
+  background: var(--card-bg);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.theme-toggle:active {
+  transform: scale(0.9) rotate(180deg);
+}
+
+/* Total Display */
+
+.total-section {
+  padding: 10px 20px 20px;
+  text-align: center;
+  position: relative;
+  flex-shrink: 0; /* Isko shrink nahi hone dega */
+}
+
+.total-amount {
+  font-size: 48px; /* Thoda resize kiya taki bottom mein fit lage */
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-shadow: var(--glow) rgba(0, 212, 255, 0.3);
+  letter-spacing: -2px;
+}
+
+.total-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+
+
+.total-amount.pulse {
+  animation: pulse 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.item-count {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  backdrop-filter: blur(10px);
+  padding: 12px 28px;
+  border-radius: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
+}
+
+/* Dashboard */
+.dashboard {
+  margin: 15px 20px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  flex: 1; /* Magic: Ye dashboard ko bachi hui sari space de dega */
+  min-height: 0; /* Keyboard khulne par isko shrink hone dega */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dashboard::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboard::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.dashboard::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 10px;
+}
+
+.dashboard-header {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.9;
+}
+
+.amount-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 20px;
+  padding: 18px;
+  margin-bottom: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.amount-item:active {
+  transform: scale(0.98);
+  border-color: var(--accent);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+}
+
+.item-number {
+  width: 45px;
+  height: 45px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px rgba(0, 212, 255, 0.4);
+}
+
+.item-input-group {
+  flex: 1;
+  position: relative;
+}
+
+.item-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  padding-right: 35px;
+}
+
+.item-input:focus {
+  color: var(--accent);
+}
+
+.currency {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+.delete-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 13px;
+  background: rgba(255, 51, 102, 0.15);
+  border: 2px solid rgba(255, 51, 102, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--danger);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.delete-btn:active {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+  transform: scale(0.9) rotate(90deg);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-dim);
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 15px;
+  opacity: 0.4;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.empty-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Input Section */
+.input-section {
+  margin: 0 20px 25px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  flex: 1;
+  position: relative;
+}
+
+.main-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px 65px 20px 20px;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--text);
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.main-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.input-currency {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  pointer-events: none;
+}
+
+.add-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--success), #00cc66);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
+  transition: all 0.3s ease;
+  font-weight: 900;
+}
+
+.add-btn:active {
+  transform: scale(0.95) rotate(10deg);
+  box-shadow: 0 5px 20px rgba(0, 255, 136, 0.6);
+}
+
+/* Action Buttons */
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.action-btn-icon {
+  font-size: 24px;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn.undo {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.action-btn.undo:active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.action-btn.clear {
+  background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(255, 51, 102, 0.1));
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.action-btn.clear:active {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+  padding: 24px 20px;
+  text-align: center;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0.9;
+}
+
+.footer-heart {
+  color: var(--danger);
+  font-size: 16px;
+  display: inline-block;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  10%, 30% { transform: scale(1.2); }
+  20%, 40% { transform: scale(1); }
+}
+
+.footer-name {
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(150px);
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 16px 28px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast-icon {
+  font-size: 22px;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+  .total-amount {
+    font-size: 44px;
+  }
+  
+  .main-input {
+    font-size: 28px;
+    padding: 18px 60px 18px 18px;
+  }
+  
+  .add-btn {
+    width: 68px;
+    height: 68px;
+    font-size: 32px;
+  }
+  
+  .item-input {
+    font-size: 22px;
+  }
+  
+  .dashboard {
+    min-height: 340px;
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 350px) {
+  .total-amount {
+    font-size: 52px;
+  }
+  
+  .main-input {
+    font-size: 26px;
+    padding: 16px 55px 16px 16px;
+  }
+  
+  .add-btn {
+    width: 64px;
+    height: 64px;
+    font-size: 30px;
+  }
+  
+  .item-input {
+    font-size: 20px;
+  }
+}
+</style>
+</head>
+<body data-theme="dark">
+
+<!-- Background Animation -->
+<div class="bg-animation">
+  <div class="bg-gradient gradient-1"></div>
+  <div class="bg-gradient gradient-2"></div>
+  <div class="bg-gradient gradient-3"></div>
+</div>
+
+<div class="container">
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">
+        <h1>Fast Amount Calc</h1>
+        <p>Made by Kunal Jain</p>
+      </div>
+    </div>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+  </header>
+
+  <section class="dashboard" id="dashboard">
+    <div class="dashboard-header">
+      <span>📊</span>
+      <span>Dashboard</span>
+    </div>
+    <div id="amountsList">
+      <div class="empty-state">
+        <div class="empty-icon">💸</div>
+        <div class="empty-text">Start adding amounts below!</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="input-section">
+    <div class="input-wrapper">
+      <div class="input-group">
+        <input 
+          type="number" 
+          class="main-input" 
+          id="mainInput" 
+          placeholder="0"
+          inputmode="decimal"
+          autocomplete="off"
+        >
+        <span class="input-currency">₹</span>
+      </div>
+      <button class="add-btn" id="addBtn">✓</button>
+    </div>
+    
+    <div class="actions">
+      <button class="action-btn undo" id="undoBtn">
+        <span class="action-btn-icon">↩️</span>
+        <span>Undo Last</span>
+      </button>
+      <button class="action-btn clear" id="clearBtn">
+        <span class="action-btn-icon">🗑️</span>
+        <span>Clear All</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="total-section">
+    <div class="total-label">
+      <span>💰</span>
+      <span>Total Amount</span>
+      <div class="item-count" id="itemCount" style="margin-left: 10px; padding: 4px 12px; font-size: 12px;">0 items</div>
+    </div>
+    <div class="total-amount" id="totalAmount">₹0</div>
+  </section>
+</div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    Made with <span class="footer-heart">❤️</span> by <span class="footer-name">Kunal Jain</span>
+  </footer>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <span id="toastText">Success!</span>
+</div>
+
+<script>
+// State
+let amounts = [];
+let idCounter = 1;
+let theme = localStorage.getItem('theme') || 'dark';
+
+// DOM Elements
+const body = document.body;
+const themeToggle = document.getElementById('themeToggle');
+const mainInput = document.getElementById('mainInput');
+const addBtn = document.getElementById('addBtn');
+const undoBtn = document.getElementById('undoBtn');
+const clearBtn = document.getElementById('clearBtn');
+const totalAmount = document.getElementById('totalAmount');
+const itemCount = document.getElementById('itemCount');
+const amountsList = document.getElementById('amountsList');
+const toast = document.getElementById('toast');
+const toastIcon = document.getElementById('toastIcon');
+const toastText = document.getElementById('toastText');
+
+// Init
+window.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  setTheme(theme);
+  mainInput.focus();
+  setupEvents();
+});
+
+// Theme Toggle
+function setTheme(newTheme) {
+  theme = newTheme;
+  body.setAttribute('data-theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('theme', theme);
+}
+
+themeToggle.addEventListener('click', () => {
+  setTheme(theme === 'dark' ? 'light' : 'dark');
+  vibrate();
+});
+
+// Events
+function setupEvents() {
+  addBtn.addEventListener('click', addAmount);
+  undoBtn.addEventListener('click', undoLast);
+  clearBtn.addEventListener('click', clearAll);
+  
+  mainInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addAmount();
+    }
+  });
+}
+
+// Vibration
+function vibrate(pattern = 15) {
+  try {
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  } catch (e) {}
+}
+
+// Toast
+function showToast(msg, icon = '✅') {
+  toastIcon.textContent = icon;
+  toastText.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Storage
+function saveData() {
+  try {
+    localStorage.setItem('amounts', JSON.stringify(amounts));
+    localStorage.setItem('idCounter', idCounter);
+  } catch (e) {}
+}
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem('amounts');
+    const savedId = localStorage.getItem('idCounter');
+    
+    if (saved) {
+      amounts = JSON.parse(saved);
+      if (savedId) idCounter = parseInt(savedId);
+      render();
+    }
+  } catch (e) {}
+}
+
+// Add Amount
+function addAmount() {
+  const val = parseFloat(mainInput.value);
+  
+  if (!val || val <= 0) {
+    mainInput.style.borderColor = 'var(--danger)';
+    mainInput.style.boxShadow = '0 0 40px rgba(255, 51, 102, 0.5)';
+    vibrate([50, 30, 50]);
+    setTimeout(() => {
+      mainInput.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+      mainInput.style.boxShadow = 'none';
+    }, 400);
+    return;
+  }
+  
+  amounts.push({ id: idCounter++, val });
+  mainInput.value = '';
+  render();
+  showToast(`₹${val.toFixed(2)} added!`, '✅');
+  vibrate();
+  saveData();
+  setTimeout(() => mainInput.focus(), 10);
+}
+
+// Delete Amount
+function deleteAmount(id) {
+  amounts = amounts.filter(x => x.id !== id);
+  render();
+  showToast('Deleted!', '🗑️');
+  vibrate();
+  saveData();
+}
+
+// Edit Amount
+function editAmount(id, newVal) {
+  const val = parseFloat(newVal);
+  const item = amounts.find(x => x.id === id);
+  
+  if (item && !isNaN(val) && val >= 0) {
+    item.val = val;
+    render();
+    saveData();
+  }
+}
+
+// Undo Last
+function undoLast() {
+  if (!amounts.length) {
+    showToast('Nothing to undo!', '⚠️');
+    vibrate([50, 30, 50]);
+    return;
+  }
+  
+  amounts.pop();
+  idCounter = Math.max(1, idCounter - 1);
+  render();
+  showToast('Last entry removed', '↩️');
+  vibrate();
+  saveData();
+  setTimeout(() => mainInput.focus(), 10);
+}
+
+// Clear All
+function clearAll() {
+  if (!amounts.length) {
+    showToast('Already empty!', '⚠️');
+    vibrate([50, 30, 50]);
+    return;
+  }
+  
+  amounts = [];
+  idCounter = 1;
+  render();
+  showToast('All cleared!', '🗑️');
+  vibrate([60, 30, 60]);
+  saveData();
+  setTimeout(() => mainInput.focus(), 10);
+}
+
+// Render
+function render() {
+  const total = amounts.reduce((s, x) => s + x.val, 0);
+  const count = amounts.length;
+  
+  // Update total
+  totalAmount.textContent = '₹' + total.toFixed(2);
+  totalAmount.classList.remove('pulse');
+  void totalAmount.offsetWidth;
+  totalAmount.classList.add('pulse');
+  
+  // Update count
+  itemCount.textContent = count + (count === 1 ? ' item' : ' items');
+  
+  // Update list
+  if (!amounts.length) {
+    amountsList.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">💸</div>
+        <div class="empty-text">Start adding amounts below!</div>
+      </div>
+    `;
+  } else {
+    amountsList.innerHTML = amounts.map((a, i) => `
+      <div class="amount-item">
+        <div class="item-number">${i + 1}</div>
+        <div class="item-input-group">
+          <input 
+            class="item-input" 
+            type="number" 
+            value="${a.val}" 
+            onchange="editAmount(${a.id}, this.value)"
+            onfocus="this.select()"
+            inputmode="decimal"
+          >
+          <span class="currency">₹</span>
+        </div>
+        <button class="delete-btn" onclick="deleteAmount(${a.id}); event.stopPropagation();">✕</button>
+      </div>
+    `).join('');
+    
+    // Auto scroll
+    const dashboard = document.getElementById('dashboard');
+    setTimeout(() => {
+      dashboard.scrollTop = dashboard.scrollHeight;
+    }, 100);
+  }
+}
+</script>
+
+</body>
+</html>
