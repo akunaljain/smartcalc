@@ -90,7 +90,7 @@ body {
   flex-direction: column;
 }
 
-/* Header */
+/* Header & Actions */
 .header {
   padding: 10px 15px;
   display: flex;
@@ -131,7 +131,13 @@ body {
   letter-spacing: 1px;
 }
 
-.theme-toggle {
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle, .share-btn {
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -143,6 +149,12 @@ body {
   font-size: 16px;
   cursor: pointer;
   box-shadow: var(--shadow);
+  color: var(--text);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:active, .share-btn:active {
+  transform: scale(0.9);
 }
 
 /* Total Section */
@@ -196,18 +208,18 @@ body {
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 8px 35px 8px 12px; /* Smaller padding */
-  font-size: 20px; /* Smaller font */
+  padding: 8px 35px 8px 12px;
+  font-size: 20px; 
   font-weight: 900;
   color: var(--text);
   font-family: 'Poppins', sans-serif;
   outline: none;
-  height: 45px; /* Fixed small height */
+  height: 45px;
 }
 .main-input:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
 .input-currency { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; font-weight: 900; color: var(--accent); }
 .add-btn {
-  width: 45px; /* Smaller button */
+  width: 45px; 
   height: 45px;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--success), #00cc66);
@@ -296,7 +308,10 @@ body {
         <span class="title-sub">Made by Kunal Jain</span>
       </div>
     </div>
-    <button class="theme-toggle" id="themeToggle">🌙</button>
+    <div class="header-actions">
+      <button class="share-btn" id="shareBtn" title="Share Bill">📤</button>
+      <button class="theme-toggle" id="themeToggle" title="Toggle Theme">🌙</button>
+    </div>
   </header>
 
   <section class="total-section">
@@ -369,6 +384,7 @@ let theme = localStorage.getItem('theme') || 'dark';
 // DOM Elements
 const body = document.body;
 const themeToggle = document.getElementById('themeToggle');
+const shareBtn = document.getElementById('shareBtn');
 const mainInput = document.getElementById('mainInput');
 const addBtn = document.getElementById('addBtn');
 const undoBtn = document.getElementById('undoBtn');
@@ -398,6 +414,38 @@ function setTheme(newTheme) {
 themeToggle.addEventListener('click', () => {
   setTheme(theme === 'dark' ? 'light' : 'dark');
   vibrate();
+});
+
+// Share Functionality
+shareBtn.addEventListener('click', async () => {
+  if (!amounts.length) {
+    showToast('Nothing to share!', '⚠️');
+    vibrate([50, 30, 50]);
+    return;
+  }
+
+  const total = amounts.reduce((s, x) => s + x.val, 0);
+  const amountsText = amounts.map(a => `₹ ${a.val}`).join('\n');
+  
+  const textToShare = `\n\n${amountsText}\n\n💰 Total: ₹ ${total}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Bill',
+        text: textToShare
+      });
+      vibrate();
+    } catch (err) {
+      console.log('Sharing cancelled or failed', err);
+    }
+  } else {
+    // Fallback if browser doesn't support Web Share API (Copy to Clipboard)
+    navigator.clipboard.writeText(textToShare).then(() => {
+      showToast('Copied to clipboard!', '📋');
+      vibrate();
+    });
+  }
 });
 
 // Keypad Functions
