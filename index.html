@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>⚡ Fast Amount Add Calculator</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 * {
   margin: 0;
@@ -137,7 +138,7 @@ body {
   gap: 10px;
 }
 
-.theme-toggle, .share-btn {
+.action-icon-btn {
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -153,7 +154,7 @@ body {
   transition: all 0.3s ease;
 }
 
-.theme-toggle:active, .share-btn:active {
+.action-icon-btn:active {
   transform: scale(0.9);
 }
 
@@ -186,7 +187,9 @@ body {
 
 .amount-item { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 10px; margin-bottom: 8px; border: 1px solid rgba(255, 255, 255, 0.05); }
 .item-number { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: #fff; flex-shrink: 0; }
-.item-input-group { flex: 1; position: relative; }
+.item-input-group { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.item-label-display { font-size: 11px; font-weight: 600; color: var(--accent); margin-bottom: 2px; text-transform: capitalize; }
+.item-price-wrapper { display: flex; align-items: center; position: relative; }
 .item-input { width: 100%; background: transparent; border: none; font-size: 18px; font-weight: 800; color: var(--text); font-family: 'Poppins', sans-serif; outline: none; }
 .delete-btn { width: 30px; height: 30px; border-radius: 8px; background: rgba(255, 51, 102, 0.15); border: 1px solid rgba(255, 51, 102, 0.3); color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; flex-shrink: 0; }
 
@@ -195,13 +198,36 @@ body {
   background: var(--card-bg);
   backdrop-filter: blur(20px);
   border-radius: 24px 24px 0 0;
-  padding: 15px;
+  padding: 10px 15px 15px;
   box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
   border-top: 2px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
 }
 
-.input-wrapper { display: flex; gap: 10px; margin-bottom: 12px; }
+.label-toggle-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+.label-toggle-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-dim);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.label-toggle-btn.active {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.input-wrapper { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.amount-add-row { display: flex; gap: 10px; }
 .input-group { flex: 1; position: relative; }
 .main-input {
   width: 100%;
@@ -215,6 +241,12 @@ body {
   font-family: 'Poppins', sans-serif;
   outline: none;
   height: 45px;
+}
+.label-input {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 12px;
+  display: none;
 }
 .main-input:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
 .input-currency { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; font-weight: 900; color: var(--accent); }
@@ -235,13 +267,13 @@ body {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 .key-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 10px 0;
+  padding: 8px 0;
   font-size: 16px;
   font-weight: 800;
   color: var(--text);
@@ -293,7 +325,7 @@ body {
 </head>
 <body data-theme="dark">
 
-<div class="bg-animation">
+<div class="bg-animation" id="bgAnim">
   <div class="bg-gradient gradient-1"></div>
   <div class="bg-gradient gradient-2"></div>
   <div class="bg-gradient gradient-3"></div>
@@ -309,8 +341,9 @@ body {
       </div>
     </div>
     <div class="header-actions">
-      <button class="share-btn" id="shareBtn" title="Share Bill">📤</button>
-      <button class="theme-toggle" id="themeToggle" title="Toggle Theme">🌙</button>
+      <button class="action-icon-btn" id="downloadBtn" title="Download HD Receipt">🖼️</button>
+      <button class="action-icon-btn" id="shareBtn" title="Share Bill text">📤</button>
+      <button class="action-icon-btn" id="themeToggle" title="Toggle Theme">🌙</button>
     </div>
   </header>
 
@@ -332,12 +365,20 @@ body {
   </section>
 
   <section class="input-section">
+    <div class="label-toggle-wrapper">
+      <button class="label-toggle-btn" id="labelToggleBtn">🏷️ Labels: OFF</button>
+    </div>
+
     <div class="input-wrapper">
-      <div class="input-group">
-        <input type="number" class="main-input" id="mainInput" placeholder="0" autocomplete="off">
-        <span class="input-currency">₹</span>
+      <input type="text" class="main-input label-input" id="labelInput" placeholder="Item Name (e.g. Chini 1kg)" autocomplete="off">
+      
+      <div class="amount-add-row">
+        <div class="input-group">
+          <input type="number" class="main-input" id="mainInput" placeholder="0" autocomplete="off" readonly>
+          <span class="input-currency">₹</span>
+        </div>
+        <button class="add-btn" id="addBtn">✓</button>
       </div>
-      <button class="add-btn" id="addBtn">✓</button>
     </div>
     
     <div class="custom-keypad">
@@ -380,11 +421,15 @@ setVH();
 let amounts = [];
 let idCounter = 1;
 let theme = localStorage.getItem('theme') || 'dark';
+let labelsEnabled = false;
 
 // DOM Elements
 const body = document.body;
 const themeToggle = document.getElementById('themeToggle');
 const shareBtn = document.getElementById('shareBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const labelToggleBtn = document.getElementById('labelToggleBtn');
+const labelInput = document.getElementById('labelInput');
 const mainInput = document.getElementById('mainInput');
 const addBtn = document.getElementById('addBtn');
 const undoBtn = document.getElementById('undoBtn');
@@ -395,6 +440,7 @@ const amountsList = document.getElementById('amountsList');
 const toast = document.getElementById('toast');
 const toastIcon = document.getElementById('toastIcon');
 const toastText = document.getElementById('toastText');
+const dashboard = document.getElementById('dashboard');
 
 // Init
 window.addEventListener('DOMContentLoaded', () => {
@@ -416,45 +462,130 @@ themeToggle.addEventListener('click', () => {
   vibrate();
 });
 
-// Share Functionality
-shareBtn.addEventListener('click', async () => {
-  if (!amounts.length) {
-    showToast('Nothing to share!', '⚠️');
-    vibrate([50, 30, 50]);
-    return;
+// Label Toggle
+labelToggleBtn.addEventListener('click', () => {
+  labelsEnabled = !labelsEnabled;
+  if (labelsEnabled) {
+    labelToggleBtn.textContent = '🏷️ Labels: ON';
+    labelToggleBtn.classList.add('active');
+    labelInput.style.display = 'block';
+    labelInput.focus(); 
+  } else {
+    labelToggleBtn.textContent = '🏷️ Labels: OFF';
+    labelToggleBtn.classList.remove('active');
+    labelInput.style.display = 'none';
+    labelInput.value = '';
   }
+  vibrate([20]);
+});
+
+// Share Functionality (Text)
+shareBtn.addEventListener('click', async () => {
+  if (!amounts.length) { return showToast('Nothing to share!', '⚠️'); vibrate([50, 30, 50]); }
 
   const total = amounts.reduce((s, x) => s + x.val, 0);
-  const amountsText = amounts.map(a => `₹ ${a.val}`).join('\n');
-  
-  const textToShare = `\n\n${amountsText}\n\n💰 Total: ₹ ${total}`;
+  const amountsText = amounts.map((a, i) => `${i + 1}. ${a.label ? a.label + ' - ' : ''}₹ ${a.val}`).join('\n');
+  const textToShare = `🧾 Bill Details:\n\n${amountsText}\n\n💰 Total: ₹ ${total}`;
 
   if (navigator.share) {
-    try {
-      await navigator.share({
-        title: 'Bill',
-        text: textToShare
-      });
-      vibrate();
-    } catch (err) {
-      console.log('Sharing cancelled or failed', err);
-    }
+    try { await navigator.share({ title: 'Bill', text: textToShare }); vibrate(); } 
+    catch (err) { console.log('Sharing cancelled', err); }
   } else {
-    // Fallback if browser doesn't support Web Share API (Copy to Clipboard)
-    navigator.clipboard.writeText(textToShare).then(() => {
-      showToast('Copied to clipboard!', '📋');
-      vibrate();
+    navigator.clipboard.writeText(textToShare).then(() => { showToast('Copied to clipboard!', '📋'); vibrate(); });
+  }
+});
+
+// Masterstroke: HIDDEN PREMIUM RECEIPT GENERATOR
+downloadBtn.addEventListener('click', async () => {
+  if (!amounts.length) { return showToast('Nothing to download!', '⚠️'); }
+  
+  showToast('Creating HD Receipt...', '⏳');
+  
+  // 1. Create an off-screen styling container perfectly suited for HD capture
+  const receipt = document.createElement('div');
+  receipt.style.width = '360px'; // Thoda compact bill size
+  receipt.style.padding = '20px'; // Padding/space kam ki
+  receipt.style.background = theme === 'dark' ? '#0f0f23' : '#ffffff';
+  receipt.style.color = theme === 'dark' ? '#ffffff' : '#1a1a2e';
+  receipt.style.fontFamily = "'Poppins', sans-serif";
+  receipt.style.position = 'absolute';
+  receipt.style.left = '-9999px'; // Hidden from user view
+  receipt.style.top = '0';
+  receipt.style.zIndex = '-1';
+  
+  const total = amounts.reduce((s, x) => s + x.val, 0);
+  const currentDate = new Date().toLocaleString('en-IN', { 
+    day: '2-digit', month: 'short', year: 'numeric', 
+    hour: '2-digit', minute:'2-digit' 
+  });
+
+  // 2. Build items HTML cleanly (1. Label --- ₹ Amount)
+  let itemsHtml = amounts.map((a, i) => `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}; padding-bottom: 6px;">
+      <div style="display: flex; gap: 8px; align-items: center; flex: 1;">
+        <div style="font-size: 14px; font-weight: 700; opacity: 0.7; width: 22px;">${i + 1}.</div>
+        <div style="font-size: 15px; font-weight: 600; text-transform: capitalize;">${a.label ? a.label : ''}</div>
+      </div>
+      <div style="font-size: 17px; font-weight: 800; color: ${theme === 'dark' ? '#00d4ff' : '#0066ff'};">
+        ₹ ${a.val}
+      </div>
+    </div>
+  `).join('');
+
+  // 3. Assemble the Premium Invoice Design with tighter spacing
+  receipt.innerHTML = `
+    <div style="text-align: center; margin-bottom: 15px;">
+      <div style="font-size: 32px; margin-bottom: 2px;">⚡</div>
+      <div style="font-size: 22px; font-weight: 900; letter-spacing: 1px;">BILL</div>
+      <div style="font-size: 12px; font-weight: 600; opacity: 0.6; margin-top: 2px;">${currentDate}</div>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+      ${itemsHtml}
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 2px solid ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'};">
+      <div style="font-size: 18px; font-weight: 800; text-transform: uppercase;">Total</div>
+      <div style="font-size: 28px; font-weight: 900; color: ${theme === 'dark' ? '#00ff88' : '#00cc66'};">₹ ${total}</div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 25px; font-size: 11px; font-weight: 700; opacity: 0.4; letter-spacing: 1px;">
+  
+    </div>
+  `;
+
+  // 4. Attach temporarily to DOM to capture
+  document.body.appendChild(receipt);
+  
+  try {
+    const canvas = await html2canvas(receipt, {
+      scale: 3, // Premium 3x HD Quality
+      backgroundColor: theme === 'dark' ? '#0f0f23' : '#ffffff',
+      logging: false,
+      useCORS: true
     });
+    
+    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+    const link = document.createElement('a');
+    link.download = `Bill_Rs${total}_${Date.now()}.jpg`;
+    link.href = imgData;
+    link.click();
+    
+    showToast('HD Receipt Saved!', '🖼️');
+    vibrate([30, 50, 30]);
+  } catch(e) {
+    showToast('Error generating image', '❌');
+    console.error(e);
+  } finally {
+    // 5. Clean up the hidden receipt immediately
+    document.body.removeChild(receipt);
   }
 });
 
 // Keypad Functions
 window.appendNum = function(num) {
-  if (mainInput.value === '0') {
-    mainInput.value = num;
-  } else {
-    mainInput.value += num;
-  }
+  if (mainInput.value === '0') mainInput.value = num;
+  else mainInput.value += num;
   vibrate([10]);
 };
 
@@ -469,11 +600,8 @@ function setupEvents() {
   undoBtn.addEventListener('click', undoLast);
   clearBtn.addEventListener('click', clearAll);
   
-  mainInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addAmount();
-    }
+  labelInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); addAmount(); }
   });
 }
 
@@ -520,8 +648,15 @@ function addAmount() {
     return;
   }
   
-  amounts.push({ id: idCounter++, val });
+  const labelText = labelsEnabled ? labelInput.value.trim() : '';
+  
+  amounts.push({ id: idCounter++, val: val, label: labelText });
   mainInput.value = '';
+  if (labelsEnabled) {
+    labelInput.value = '';
+    labelInput.focus(); // ready for next item
+  }
+  
   render();
   showToast(`₹${val} added!`, '✅');
   vibrate();
@@ -588,7 +723,10 @@ function render() {
       <div class="amount-item">
         <div class="item-number">${i + 1}</div>
         <div class="item-input-group">
-          <input class="item-input" type="number" value="${a.val}" onchange="editAmount(${a.id}, this.value)" inputmode="decimal">
+          ${a.label ? `<div class="item-label-display">${a.label}</div>` : ''}
+          <div class="item-price-wrapper">
+            <input class="item-input" type="number" value="${a.val}" onchange="editAmount(${a.id}, this.value)" inputmode="decimal">
+          </div>
         </div>
         <button class="delete-btn" onclick="deleteAmount(${a.id})">✕</button>
       </div>
