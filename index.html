@@ -7,156 +7,56 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --bg-1: #0f0f23;
-  --bg-2: #1a1a2e;
-  --bg-3: #16213e;
+  --bg-1: #0f0f23; --bg-2: #1a1a2e; --bg-3: #16213e;
   --card-bg: rgba(255, 255, 255, 0.05);
-  --accent: #00d4ff;
-  --accent-2: #ff006e;
-  --success: #00ff88;
-  --danger: #ff3366;
-  --text: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.6);
+  --accent: #00d4ff; --accent-2: #ff006e;
+  --success: #00ff88; --danger: #ff3366;
+  --text: #ffffff; --text-dim: rgba(255, 255, 255, 0.6);
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  --glow: 0 0 40px;
-  --vh: 1vh;
+  --glow: 0 0 40px; --vh: 1vh;
 }
 
 [data-theme="light"] {
-  --bg-1: #f8f9fa;
-  --bg-2: #ffffff;
-  --bg-3: #e9ecef;
+  --bg-1: #f8f9fa; --bg-2: #ffffff; --bg-3: #e9ecef;
   --card-bg: rgba(255, 255, 255, 0.95);
-  --accent: #0066ff;
-  --accent-2: #ff0066;
-  --success: #00cc66;
-  --danger: #ff3366;
-  --text: #1a1a2e;
-  --text-dim: rgba(0, 0, 0, 0.6);
+  --accent: #0066ff; --accent-2: #ff0066;
+  --success: #00cc66; --danger: #ff3366;
+  --text: #1a1a2e; --text-dim: rgba(0, 0, 0, 0.6);
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background: var(--bg-1);
-  color: var(--text);
-  height: calc(var(--vh, 1vh) * 100);
-  overflow: hidden; 
-  transition: background 0.3s ease, color 0.3s ease;
-  position: relative;
-  touch-action: pan-x pan-y;
+  font-family: 'Poppins', sans-serif; background: var(--bg-1); color: var(--text);
+  height: calc(var(--vh, 1vh) * 100); overflow: hidden; 
+  transition: background 0.3s ease, color 0.3s ease; position: relative; touch-action: pan-x pan-y;
 }
 
 /* Background Animation */
-.bg-animation {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.bg-gradient {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.3;
-  animation: float 20s ease-in-out infinite;
-}
+.bg-animation { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.bg-gradient { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; animation: float 20s ease-in-out infinite; }
 .gradient-1 { width: 500px; height: 500px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); top: -200px; left: -200px; animation-delay: 0s; }
 .gradient-2 { width: 400px; height: 400px; background: linear-gradient(225deg, var(--success), var(--accent)); bottom: -150px; right: -150px; animation-delay: -10s; }
 .gradient-3 { width: 300px; height: 300px; background: linear-gradient(45deg, var(--accent-2), var(--success)); top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: -5s; }
 
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(50px, -50px) scale(1.1); }
-  66% { transform: translate(-50px, 50px) scale(0.9); }
-}
+@keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(50px, -50px) scale(1.1); } 66% { transform: translate(-50px, 50px) scale(0.9); } }
 
-.container {
-  max-width: 600px;
-  width: 100%;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
+.container { max-width: 600px; width: 100%; margin: 0 auto; position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; }
 
 /* Header & Actions */
-.header {
-  padding: 10px 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  backdrop-filter: blur(20px);
-  background: rgba(255, 255, 255, 0.02);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  flex-shrink: 0;
-}
+.header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255, 255, 255, 0.05); flex-shrink: 0; }
 .logo { display: flex; align-items: center; gap: 10px; }
 .logo-icon { font-size: 24px; animation: spin 3s linear infinite; }
+@keyframes spin { 0%, 90% { transform: rotate(0deg); } 95% { transform: rotate(10deg); } 100% { transform: rotate(0deg); } }
+.logo-text h1 { font-size: 16px; font-weight: 900; display: flex; flex-direction: column; line-height: 1.2; }
+.title-main { background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.title-sub { font-size: 9px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
 
-@keyframes spin {
-  0%, 90% { transform: rotate(0deg); }
-  95% { transform: rotate(10deg); }
-  100% { transform: rotate(0deg); }
-}
-
-.logo-text h1 {
-  font-size: 16px;
-  font-weight: 900;
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-}
-.title-main {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.title-sub {
-  font-size: 9px;
-  font-weight: 800;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.action-icon-btn {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background: var(--card-bg);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  color: var(--text);
-  transition: all 0.3s ease;
-}
-
-.action-icon-btn:active {
-  transform: scale(0.9);
-}
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.action-icon-btn { width: 35px; height: 35px; border-radius: 50%; background: var(--card-bg); border: 2px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; box-shadow: var(--shadow); color: var(--text); transition: all 0.3s ease; }
+.action-icon-btn:active { transform: scale(0.9); }
 
 /* Total Section */
 .total-section { padding: 10px 20px 5px; text-align: center; flex-shrink: 0; z-index: 10; }
@@ -164,23 +64,10 @@ body {
 .item-count { font-size: 11px; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2)); padding: 2px 10px; border-radius: 20px; }
 .total-amount { font-size: 42px; font-weight: 900; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; text-shadow: var(--glow) rgba(0, 212, 255, 0.3); letter-spacing: -1px; }
 .total-amount.pulse { animation: pulse 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
 /* Dashboard */
-.dashboard {
-  margin: 5px 15px 10px;
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 12px;
-  box-shadow: var(--shadow);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  flex: 1; 
-  min-height: 0; 
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
+.dashboard { margin: 5px 15px 10px; background: var(--card-bg); backdrop-filter: blur(20px); border-radius: 20px; padding: 12px; box-shadow: var(--shadow); border: 2px solid rgba(255, 255, 255, 0.1); flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .dashboard::-webkit-scrollbar { width: 4px; }
 .dashboard::-webkit-scrollbar-track { background: transparent; }
 .dashboard::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
@@ -194,101 +81,24 @@ body {
 .delete-btn { width: 30px; height: 30px; border-radius: 8px; background: rgba(255, 51, 102, 0.15); border: 1px solid rgba(255, 51, 102, 0.3); color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; flex-shrink: 0; }
 
 /* Input Section & Keypad */
-.input-section {
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  border-radius: 24px 24px 0 0;
-  padding: 10px 15px 15px;
-  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
-  border-top: 2px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
-}
-
-.label-toggle-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
-}
-.label-toggle-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-dim);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.label-toggle-btn.active {
-  background: rgba(0, 212, 255, 0.15);
-  border-color: var(--accent);
-  color: var(--accent);
-}
+.input-section { background: var(--card-bg); backdrop-filter: blur(20px); border-radius: 24px 24px 0 0; padding: 10px 15px 15px; box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2); border-top: 2px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; }
+.label-toggle-wrapper { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.label-toggle-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-dim); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+.label-toggle-btn.active { background: rgba(0, 212, 255, 0.15); border-color: var(--accent); color: var(--accent); }
 
 .input-wrapper { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
 .amount-add-row { display: flex; gap: 10px; }
 .input-group { flex: 1; position: relative; }
-.main-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 8px 35px 8px 12px;
-  font-size: 20px; 
-  font-weight: 900;
-  color: var(--text);
-  font-family: 'Poppins', sans-serif;
-  outline: none;
-  height: 45px;
-}
-.label-input {
-  font-size: 14px;
-  font-weight: 600;
-  padding: 8px 12px;
-  display: none;
-}
+.main-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 8px 35px 8px 12px; font-size: 20px; font-weight: 900; color: var(--text); font-family: 'Poppins', sans-serif; outline: none; height: 45px; }
+.label-input { font-size: 14px; font-weight: 600; padding: 8px 12px; display: none; }
 .main-input:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
 .input-currency { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; font-weight: 900; color: var(--accent); }
-.add-btn {
-  width: 45px; 
-  height: 45px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--success), #00cc66);
-  border: none;
-  color: #fff;
-  font-size: 22px;
-  font-weight: 900;
-  cursor: pointer;
-}
+.add-btn { width: 45px; height: 45px; border-radius: 12px; background: linear-gradient(135deg, var(--success), #00cc66); border: none; color: #fff; font-size: 22px; font-weight: 900; cursor: pointer; }
 
 /* Custom Number Pad */
-.custom-keypad {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
-  margin-bottom: 10px;
-}
-.key-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 8px 0;
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.key-btn:active {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #fff;
-  transform: scale(0.9);
-  border-color: transparent;
-}
+.custom-keypad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-bottom: 10px; }
+.key-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 8px 0; font-size: 16px; font-weight: 800; color: var(--text); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.key-btn:active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; transform: scale(0.9); border-color: transparent; }
 .key-backspace { color: var(--danger); background: rgba(255, 51, 102, 0.1); }
 .key-backspace:active { background: var(--danger); }
 
@@ -298,28 +108,24 @@ body {
 .action-btn.undo { background: rgba(0, 212, 255, 0.15); color: var(--accent); }
 .action-btn.clear { background: rgba(255, 51, 102, 0.15); color: var(--danger); }
 
-/* Toast */
-.toast {
-  position: fixed;
-  top: 20px; 
-  left: 50%;
-  transform: translateX(-50%) translateY(-100px);
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 30px;
-  padding: 10px 20px;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Modal Settings */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(5px);
 }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-content {
+  background: var(--bg-2); padding: 25px 20px; border-radius: 20px;
+  width: 90%; max-width: 350px; border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+.modal-content h3 { margin-bottom: 20px; color: var(--text); font-size: 18px; text-align: center; font-weight: 800; }
+.modal-content .main-input { height: auto; padding: 12px 15px; font-size: 14px; margin-bottom: 12px; }
+
+/* Toast */
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; padding: 10px 20px; font-size: 13px; font-weight: 800; color: var(--text); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); z-index: 3000; opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; gap: 8px; }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 </style>
 </head>
@@ -341,6 +147,7 @@ body {
       </div>
     </div>
     <div class="header-actions">
+      <button class="action-icon-btn" id="settingsBtn" title="Personalize Bill">⚙️</button>
       <button class="action-icon-btn" id="downloadBtn" title="Download HD Receipt">🖼️</button>
       <button class="action-icon-btn" id="shareBtn" title="Share Bill text">📤</button>
       <button class="action-icon-btn" id="themeToggle" title="Toggle Theme">🌙</button>
@@ -371,7 +178,6 @@ body {
 
     <div class="input-wrapper">
       <input type="text" class="main-input label-input" id="labelInput" placeholder="Item Name (e.g. Chini 1kg)" autocomplete="off">
-      
       <div class="amount-add-row">
         <div class="input-group">
           <input type="number" class="main-input" id="mainInput" placeholder="0" autocomplete="off" readonly>
@@ -403,13 +209,24 @@ body {
   </section>
 </div>
 
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-content">
+    <h3>🧾 Personalize Bill</h3>
+    <input type="text" id="shopNameInput" class="main-input" placeholder="Shop Name (e.g. Ajay general...)">
+    <input type="text" id="shopAddressInput" class="main-input" placeholder="Address (e.g. Main Market, City)">
+    <div style="display:flex; gap:10px; margin-top: 15px;">
+      <button class="action-btn clear" id="closeSettingsBtn" style="flex:1;">Cancel</button>
+      <button class="add-btn" id="saveSettingsBtn" style="flex:1; height:40px; font-size:16px; border-radius:10px;">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast">
   <span id="toastIcon">✅</span>
   <span id="toastText">Success!</span>
 </div>
 
 <script>
-// Mobile Viewport Height Fix
 function setVH() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -417,17 +234,20 @@ function setVH() {
 window.addEventListener('resize', setVH);
 setVH();
 
-// State
 let amounts = [];
 let idCounter = 1;
 let theme = localStorage.getItem('theme') || 'dark';
 let labelsEnabled = false;
 
-// DOM Elements
+// Shop Settings
+let shopName = localStorage.getItem('shopName') || '';
+let shopAddress = localStorage.getItem('shopAddress') || '';
+
 const body = document.body;
 const themeToggle = document.getElementById('themeToggle');
 const shareBtn = document.getElementById('shareBtn');
 const downloadBtn = document.getElementById('downloadBtn');
+const settingsBtn = document.getElementById('settingsBtn');
 const labelToggleBtn = document.getElementById('labelToggleBtn');
 const labelInput = document.getElementById('labelInput');
 const mainInput = document.getElementById('mainInput');
@@ -442,23 +262,42 @@ const toastIcon = document.getElementById('toastIcon');
 const toastText = document.getElementById('toastText');
 const dashboard = document.getElementById('dashboard');
 
-// Init
+// Modal Elements
+const settingsModal = document.getElementById('settingsModal');
+const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+const shopNameInput = document.getElementById('shopNameInput');
+const shopAddressInput = document.getElementById('shopAddressInput');
+
 window.addEventListener('DOMContentLoaded', () => {
   loadData();
   setTheme(theme);
   setupEvents();
 });
 
-// Theme Toggle
 function setTheme(newTheme) {
   theme = newTheme;
   body.setAttribute('data-theme', theme);
   themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
   localStorage.setItem('theme', theme);
 }
+themeToggle.addEventListener('click', () => { setTheme(theme === 'dark' ? 'light' : 'dark'); vibrate(); });
 
-themeToggle.addEventListener('click', () => {
-  setTheme(theme === 'dark' ? 'light' : 'dark');
+// Modal Logic
+settingsBtn.addEventListener('click', () => {
+  shopNameInput.value = shopName;
+  shopAddressInput.value = shopAddress;
+  settingsModal.classList.add('active');
+  vibrate([20]);
+});
+closeSettingsBtn.addEventListener('click', () => { settingsModal.classList.remove('active'); });
+saveSettingsBtn.addEventListener('click', () => {
+  shopName = shopNameInput.value.trim();
+  shopAddress = shopAddressInput.value.trim();
+  localStorage.setItem('shopName', shopName);
+  localStorage.setItem('shopAddress', shopAddress);
+  settingsModal.classList.remove('active');
+  showToast('Bill Details Saved!', '✅');
   vibrate();
 });
 
@@ -485,7 +324,8 @@ shareBtn.addEventListener('click', async () => {
 
   const total = amounts.reduce((s, x) => s + x.val, 0);
   const amountsText = amounts.map((a, i) => `${i + 1}. ${a.label ? a.label + ' - ' : ''}₹ ${a.val}`).join('\n');
-  const textToShare = `🧾 Bill Details:\n\n${amountsText}\n\n💰 Total: ₹ ${total}`;
+  const header = shopName ? shopName : 'BILL';
+  const textToShare = `🧾 ${header}\n\n${amountsText}\n\n💰 Total: ₹ ${total}`;
 
   if (navigator.share) {
     try { await navigator.share({ title: 'Bill', text: textToShare }); vibrate(); } 
@@ -501,43 +341,42 @@ downloadBtn.addEventListener('click', async () => {
   
   showToast('Creating HD Receipt...', '⏳');
   
-  // 1. Create an off-screen styling container perfectly suited for HD capture
   const receipt = document.createElement('div');
-  receipt.style.width = '360px'; // Thoda compact bill size
-  receipt.style.padding = '20px'; // Padding/space kam ki
+  receipt.style.width = '360px'; 
+  receipt.style.padding = '20px'; 
   receipt.style.background = theme === 'dark' ? '#0f0f23' : '#ffffff';
   receipt.style.color = theme === 'dark' ? '#ffffff' : '#1a1a2e';
   receipt.style.fontFamily = "'Poppins', sans-serif";
   receipt.style.position = 'absolute';
-  receipt.style.left = '-9999px'; // Hidden from user view
+  receipt.style.left = '-9999px'; 
   receipt.style.top = '0';
   receipt.style.zIndex = '-1';
   
   const total = amounts.reduce((s, x) => s + x.val, 0);
-  const currentDate = new Date().toLocaleString('en-IN', { 
-    day: '2-digit', month: 'short', year: 'numeric', 
-    hour: '2-digit', minute:'2-digit' 
-  });
+  const currentDate = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' });
 
-  // 2. Build items HTML cleanly (1. Label --- ₹ Amount)
+  // Clean Items Format
   let itemsHtml = amounts.map((a, i) => `
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}; padding-bottom: 6px;">
       <div style="display: flex; gap: 8px; align-items: center; flex: 1;">
         <div style="font-size: 14px; font-weight: 700; opacity: 0.7; width: 22px;">${i + 1}.</div>
         <div style="font-size: 15px; font-weight: 600; text-transform: capitalize;">${a.label ? a.label : ''}</div>
       </div>
-      <div style="font-size: 17px; font-weight: 800; color: ${theme === 'dark' ? '#00d4ff' : '#0066ff'};">
-        ₹ ${a.val}
-      </div>
+      <div style="font-size: 17px; font-weight: 800; color: ${theme === 'dark' ? '#00d4ff' : '#0066ff'};">₹ ${a.val}</div>
     </div>
   `).join('');
 
-  // 3. Assemble the Premium Invoice Design with tighter spacing
+  // Generate Dynamic Header from Settings
+  const headerTitle = shopName ? shopName : 'BILL';
+  const addressHtml = shopAddress ? `<div style="font-size: 11px; font-weight: 600; opacity: 0.7; margin-top: 4px; line-height: 1.2;">${shopAddress}</div>` : '';
+
+  // Assemble Design
   receipt.innerHTML = `
     <div style="text-align: center; margin-bottom: 15px;">
       <div style="font-size: 32px; margin-bottom: 2px;">⚡</div>
-      <div style="font-size: 22px; font-weight: 900; letter-spacing: 1px;">BILL</div>
-      <div style="font-size: 12px; font-weight: 600; opacity: 0.6; margin-top: 2px;">${currentDate}</div>
+      <div style="font-size: 22px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">${headerTitle}</div>
+      ${addressHtml}
+      <div style="font-size: 12px; font-weight: 600; opacity: 0.6; margin-top: 6px;">${currentDate}</div>
     </div>
     
     <div style="margin-bottom: 15px;">
@@ -550,16 +389,14 @@ downloadBtn.addEventListener('click', async () => {
     </div>
     
     <div style="text-align: center; margin-top: 25px; font-size: 11px; font-weight: 700; opacity: 0.4; letter-spacing: 1px;">
-  
     </div>
   `;
 
-  // 4. Attach temporarily to DOM to capture
   document.body.appendChild(receipt);
   
   try {
     const canvas = await html2canvas(receipt, {
-      scale: 3, // Premium 3x HD Quality
+      scale: 3, 
       backgroundColor: theme === 'dark' ? '#0f0f23' : '#ffffff',
       logging: false,
       useCORS: true
@@ -577,7 +414,6 @@ downloadBtn.addEventListener('click', async () => {
     showToast('Error generating image', '❌');
     console.error(e);
   } finally {
-    // 5. Clean up the hidden receipt immediately
     document.body.removeChild(receipt);
   }
 });
@@ -594,31 +430,21 @@ window.backspaceNum = function() {
   vibrate([10]);
 };
 
-// Events
 function setupEvents() {
   addBtn.addEventListener('click', addAmount);
   undoBtn.addEventListener('click', undoLast);
   clearBtn.addEventListener('click', clearAll);
-  
-  labelInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); addAmount(); }
-  });
+  labelInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addAmount(); } });
 }
 
-// Vibration
-function vibrate(pattern = 15) {
-  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {}
-}
+function vibrate(pattern = 15) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {} }
 
-// Toast
 function showToast(msg, icon = '✅') {
-  toastIcon.textContent = icon;
-  toastText.textContent = msg;
+  toastIcon.textContent = icon; toastText.textContent = msg;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
-// Storage
 function saveData() {
   try {
     localStorage.setItem('amounts', JSON.stringify(amounts));
@@ -630,94 +456,53 @@ function loadData() {
   try {
     const saved = localStorage.getItem('amounts');
     const savedId = localStorage.getItem('idCounter');
-    if (saved) {
-      amounts = JSON.parse(saved);
-      if (savedId) idCounter = parseInt(savedId);
-      render();
-    }
+    if (saved) { amounts = JSON.parse(saved); if (savedId) idCounter = parseInt(savedId); render(); }
   } catch (e) {}
 }
 
-// Actions
 function addAmount() {
   const val = parseFloat(mainInput.value);
   if (!val || val <= 0) {
-    mainInput.style.borderColor = 'var(--danger)';
-    vibrate([50, 30, 50]);
-    setTimeout(() => mainInput.style.borderColor = 'rgba(255, 255, 255, 0.1)', 400);
-    return;
+    mainInput.style.borderColor = 'var(--danger)'; vibrate([50, 30, 50]);
+    setTimeout(() => mainInput.style.borderColor = 'rgba(255, 255, 255, 0.1)', 400); return;
   }
   
   const labelText = labelsEnabled ? labelInput.value.trim() : '';
-  
   amounts.push({ id: idCounter++, val: val, label: labelText });
   mainInput.value = '';
-  if (labelsEnabled) {
-    labelInput.value = '';
-    labelInput.focus(); // ready for next item
-  }
+  if (labelsEnabled) { labelInput.value = ''; labelInput.focus(); }
   
-  render();
-  showToast(`₹${val} added!`, '✅');
-  vibrate();
-  saveData();
+  render(); showToast(`₹${val} added!`, '✅'); vibrate(); saveData();
 }
 
-function deleteAmount(id) {
-  amounts = amounts.filter(x => x.id !== id);
-  render();
-  showToast('Deleted!', '🗑️');
-  vibrate();
-  saveData();
-}
+function deleteAmount(id) { amounts = amounts.filter(x => x.id !== id); render(); showToast('Deleted!', '🗑️'); vibrate(); saveData(); }
 
 function editAmount(id, newVal) {
-  const val = parseFloat(newVal);
-  const item = amounts.find(x => x.id === id);
-  if (item && !isNaN(val) && val >= 0) {
-    item.val = val;
-    render();
-    saveData();
-  }
+  const val = parseFloat(newVal); const item = amounts.find(x => x.id === id);
+  if (item && !isNaN(val) && val >= 0) { item.val = val; render(); saveData(); }
 }
 
 function undoLast() {
   if (!amounts.length) return showToast('Empty!', '⚠️');
-  amounts.pop();
-  idCounter = Math.max(1, idCounter - 1);
-  render();
-  showToast('Undo successful', '↩️');
-  vibrate();
-  saveData();
+  amounts.pop(); idCounter = Math.max(1, idCounter - 1);
+  render(); showToast('Undo successful', '↩️'); vibrate(); saveData();
 }
 
 function clearAll() {
   if (!amounts.length) return showToast('Already empty!', '⚠️');
-  amounts = [];
-  idCounter = 1;
-  render();
-  showToast('Cleared!', '🗑️');
-  vibrate([60, 30, 60]);
-  saveData();
+  amounts = []; idCounter = 1;
+  render(); showToast('Cleared!', '🗑️'); vibrate([60, 30, 60]); saveData();
 }
 
-// Render
 function render() {
   const total = amounts.reduce((s, x) => s + x.val, 0);
   
   totalAmount.textContent = '₹' + total;
-  totalAmount.classList.remove('pulse');
-  void totalAmount.offsetWidth;
-  totalAmount.classList.add('pulse');
-  
+  totalAmount.classList.remove('pulse'); void totalAmount.offsetWidth; totalAmount.classList.add('pulse');
   itemCount.textContent = amounts.length + ' items';
   
   if (!amounts.length) {
-    amountsList.innerHTML = `
-      <div style="text-align:center; padding: 20px; color: var(--text-dim);">
-        <div style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;">💸</div>
-        <div style="font-size: 14px; font-weight: 600;">Start adding amounts!</div>
-      </div>`;
+    amountsList.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-dim);"><div style="font-size: 40px; margin-bottom: 10px; opacity: 0.5;">💸</div><div style="font-size: 14px; font-weight: 600;">Start adding amounts!</div></div>`;
   } else {
     amountsList.innerHTML = amounts.map((a, i) => `
       <div class="amount-item">
@@ -731,7 +516,6 @@ function render() {
         <button class="delete-btn" onclick="deleteAmount(${a.id})">✕</button>
       </div>
     `).join('');
-    
     setTimeout(() => { dashboard.scrollTop = dashboard.scrollHeight; }, 50);
   }
 }
