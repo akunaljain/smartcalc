@@ -2,8 +2,8 @@
   "name": "Fast Calc",
   "short_name": "FastCalc",
   "description": "Fast Amount Add Calculator by Kunal Jain",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/smartcalc/index.html",
+  "scope": "/smartcalc/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#0f0f23",
@@ -13,13 +13,25 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
