@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>⚡ Fast Amount Add Calculator</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f0f23">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -228,60 +226,13 @@ body {
   <span id="toastText">Success!</span>
 </div>
 
-
 <script>
-
-
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  // show custom install UI
-  document.getElementById('installBox').style.display = 'flex';
-});
-
-function installApp() {
-  if (!deferredPrompt) return;
-
-  deferredPrompt.prompt();
-
-  deferredPrompt.userChoice.then(choice => {
-    if (choice.outcome === 'accepted') {
-      console.log('User installed');
-    }
-    deferredPrompt = null;
-    hideInstall();
-  });
-}
-
-function hideInstall() {
-  document.getElementById('installBox').style.display = 'none';
-}
-
-  
-// ✅ PASTE HERE (TOP ME)
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => {
-        console.log('SW registered');
-
-        if (!navigator.serviceWorker.controller) {
-          window.location.reload();
-        }
-      })
-      .catch(err => console.log('SW error:', err));
-  });
-}
-
-
-// 👇 baaki tumhara code (already hai)
 function setVH() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
+window.addEventListener('resize', setVH);
+setVH();
 
 let amounts = [];
 let idCounter = 1;
@@ -570,40 +521,5 @@ function render() {
 }
 </script>
 
-<div id="installBox" style="
-position: fixed;
-bottom: 20px;
-left: 50%;
-transform: translateX(-50%);
-background: rgba(0,0,0,0.9);
-color: white;
-padding: 12px 18px;
-border-radius: 14px;
-display: none;
-align-items: center;
-gap: 12px;
-z-index: 9999;
-box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-font-family: Poppins;
-">
-
-  <span style="font-size:14px; font-weight:600;">
-    Install FastCalc ⚡
-  </span>
-
-  <button onclick="installApp()" style="
-    background: linear-gradient(135deg,#00ff88,#00cc66);
-    border:none;
-    padding:6px 12px;
-    border-radius:8px;
-    font-weight:700;
-    cursor:pointer;
-  ">
-    Install
-  </button>
-
-  <span onclick="hideInstall()" style="cursor:pointer;">✖</span>
-
-</div>
 </body>
 </html>
