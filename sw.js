@@ -1,5 +1,4 @@
 const CACHE_NAME = "fastcalc-v2";
-
 const ASSETS = [
   "/",
   "/index.html",
@@ -10,8 +9,7 @@ const ASSETS = [
 
 // INSTALL
 self.addEventListener("install", event => {
-  self.skipWaiting(); // force install
-
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(ASSETS);
@@ -32,8 +30,7 @@ self.addEventListener("activate", event => {
       );
     })
   );
-
-  self.clients.claim(); // control immediately
+  self.clients.claim();
 });
 
 // FETCH
