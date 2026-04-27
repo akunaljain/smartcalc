@@ -231,6 +231,36 @@ body {
 
 <script>
 
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // show custom install UI
+  document.getElementById('installBox').style.display = 'flex';
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+
+  deferredPrompt.userChoice.then(choice => {
+    if (choice.outcome === 'accepted') {
+      console.log('User installed');
+    }
+    deferredPrompt = null;
+    hideInstall();
+  });
+}
+
+function hideInstall() {
+  document.getElementById('installBox').style.display = 'none';
+}
+
+  
 // ✅ PASTE HERE (TOP ME)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -540,5 +570,40 @@ function render() {
 }
 </script>
 
+<div id="installBox" style="
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+background: rgba(0,0,0,0.9);
+color: white;
+padding: 12px 18px;
+border-radius: 14px;
+display: none;
+align-items: center;
+gap: 12px;
+z-index: 9999;
+box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+font-family: Poppins;
+">
+
+  <span style="font-size:14px; font-weight:600;">
+    Install FastCalc ⚡
+  </span>
+
+  <button onclick="installApp()" style="
+    background: linear-gradient(135deg,#00ff88,#00cc66);
+    border:none;
+    padding:6px 12px;
+    border-radius:8px;
+    font-weight:700;
+    cursor:pointer;
+  ">
+    Install
+  </button>
+
+  <span onclick="hideInstall()" style="cursor:pointer;">✖</span>
+
+</div>
 </body>
 </html>
