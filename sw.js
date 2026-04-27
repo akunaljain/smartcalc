@@ -1,9 +1,10 @@
-const CACHE_NAME = 'fastcalc-v1';
+const CACHE_NAME = 'fastcalc-v2';
 const ASSETS = [
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  '/smartcalc/',
+  '/smartcalc/index.html',
+  '/smartcalc/manifest.json',
+  '/smartcalc/icon-192.png',
+  '/smartcalc/icon-512.png'
 ];
 
 self.addEventListener('install', e => {
