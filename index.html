@@ -229,16 +229,29 @@ body {
 </div>
 
 <script>
+<script>
+
+// ✅ PASTE HERE (TOP ME)
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => {
+        console.log('SW registered');
+
+        if (!navigator.serviceWorker.controller) {
+          window.location.reload();
+        }
+      })
+      .catch(err => console.log('SW error:', err));
+  });
 }
-  
+
+
+// 👇 baaki tumhara code (already hai)
 function setVH() {
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
-window.addEventListener('resize', setVH);
-setVH();
 
 let amounts = [];
 let idCounter = 1;
